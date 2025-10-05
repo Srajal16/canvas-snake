@@ -1,4 +1,4 @@
-// 🎨 ETCH-A-SKETCH GAME WITH FOOD + SELF-COLLISION DETECTION
+// 🐍 CANVAS SNAKE GAME
 
 // =========================
 // 🔹 ELEMENT SELECTION
@@ -42,6 +42,7 @@ function startPoint() {
 
 startPoint();
 drawFood();
+updateScore();
 
 // =========================
 // 🔹 DRAW FOOD FUNCTION
@@ -51,6 +52,13 @@ function drawFood() {
   ctx.beginPath();
   ctx.arc(foodX, foodY, 10, 0, Math.PI * 2);
   ctx.fill();
+}
+
+// =========================
+// 🔹 UPDATE SCORE FUNCTION
+// =========================
+function updateScore() {
+  scoreLabel.textContent = `Score: ${score}`;
 }
 
 // =========================
@@ -85,7 +93,7 @@ function draw({ key }) {
   if (visited.has(coord)) {
     alert('Game Over! You crossed your own path.');
     window.removeEventListener('keydown', handleKey);
-    clearCanvas(true); // true → redraw both food & point
+    clearCanvas(true);
     return;
   }
 
@@ -97,7 +105,7 @@ function draw({ key }) {
   const distance = Math.hypot(x - foodX, y - foodY);
   if (distance < MOVE_AMOUNT / 2) {
     score += 1;
-    scoreLabel.textContent = `Score: ${score}`;
+    updateScore();
 
     // Generate new food
     foodX = Math.floor(Math.random() * width);
@@ -133,14 +141,16 @@ function clearCanvas(redrawAll = false) {
   visited.clear();
   visited.add(`${x},${y}`);
 
-  // Redraw current point
-  startPoint();
+  // Reset score on clear
+  score = 0;
+  updateScore();
 
-  // If game over, redraw food too
-  if (redrawAll) {
-    drawFood();
-    window.addEventListener('keydown', handleKey); // re-enable controls
-  }
+  // Redraw player & food
+  startPoint();
+  drawFood();
+
+  // Re-enable key events
+  window.addEventListener('keydown', handleKey);
 }
 
 // =========================
